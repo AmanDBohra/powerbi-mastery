@@ -301,7 +301,7 @@ Rolling 3M = CALCULATE([Total Sales], DATESINPERIOD(DimDate[Date], MAX(DimDate[D
 Fiscal: `TOTALYTD([m], DimDate[Date], "3/31")`.
 
 ## 3.16 Build the KPI layer (definition → formula → validation)
-Total Sales, Total Cost (`SUMX(Sales, Qty*RELATED(Product[UnitCost]))`), Profit, Margin %, Orders, Customers, AOV, Return Amount, Return Rate %, Target, Variance, Achievement %. **Always pair a KPI with a validation source** — reconcile to SQL.
+Total Sales, Total Cost (`SUMX(Sales, Sales[Quantity]*RELATED(Product[UnitCost]))`), Total Profit, Margin %, Orders, Customers, AOV, Return Amount, Return Rate %, Target, Variance, Achievement %. **Always pair a KPI with a validation source** — reconcile to SQL.
 
 ## 3.17 DAX debugging flow
 Business definition agreed? → data right at source? → relationships correct? → what's the filter context here? → break into VARs and RETURN each → test on a tiny hand-calc slice.
@@ -529,7 +529,7 @@ Implement dynamic RLS (each regional manager sees only their region, test with "
 | Reshape columns | Pivot / Unpivot |
 | Business calculation | DAX Measure |
 | Row-level derived value | Calculated Column |
-| Trend | Line | 
+| Trend | Line |
 | Comparison | Bar |
 | KPI | Card / KPI |
 | Detail | Table / Matrix |

@@ -1,7 +1,7 @@
 # Power BI — Visual Mind-Map Mastery
 
 **Think like a BI developer & consultant — not a button-clicker.**
-Companion to the structured course (`02-project-ready-course.md`). This one is built the way you learn best: **mind maps · analogies · tiny datasets · memory hooks · before/after · active recall.** Every concept uses the same 12-point pattern. Work the exercises and the recall prompts out loud.
+Companion to the structured course (`02-project-ready-course.md`). This one is built the way you learn best: **mind maps · analogies · tiny datasets · memory hooks · before/after · active recall.** The first concept below (Power Query) is worked through a full **12-point pattern** as a template — *what · why · picture · analogy · tiny example · demo · result · real use · common mistake · memory · exercise · recall* — then later sections apply the same thinking as condensed maps. Work the exercises and say the recall prompts out loud.
 
 > **The one belief that drives everything:** *Power BI turns data into decisions.* Never ask "what chart should I make?" first. Ask "what business question am I answering?"
 
@@ -215,7 +215,7 @@ DIM DATE: Date · Year · Quarter · Month · MonthNumber · Week · Day · Fisc
 Why: time intelligence (YTD, YoY) needs a dedicated, continuous, **marked** date table (one row per day, full range). Turn off Auto date/time. Sort MonthName by MonthNumber (or Apr sorts before Jan alphabetically — classic beginner bug).
 ```DAX
 DimDate = ADDCOLUMNS(CALENDAR(DATE(2022,1,1), DATE(2026,12,31)),
-   "Year", YEAR([Date]), "MonthNo", MONTH([Date]), "Month", FORMAT([Date],"MMM"),
+   "Year", YEAR([Date]), "MonthNumber", MONTH([Date]), "MonthName", FORMAT([Date],"MMM"),
    "Quarter","Q"&FORMAT([Date],"Q"))
 ```
 Then **Mark as Date Table**.
@@ -265,8 +265,8 @@ MEASURE           = computed WHEN THE REPORT ASKS, reacting to filters (not stor
 ```DAX
 Total Sales   = SUM(Sales[SalesAmount])
 Total Cost    = SUM(Sales[Cost])
-Profit        = [Total Sales] - [Total Cost]
-Profit Margin = DIVIDE([Profit], [Total Sales], 0)   -- DIVIDE = safe, no div/0 error
+Total Profit  = [Total Sales] - [Total Cost]
+Profit Margin = DIVIDE([Total Profit], [Total Sales], 0)   -- DIVIDE = safe, no div/0 error
 Revenue       = SUMX(Sales, Sales[Quantity]*Sales[UnitPrice])  -- per-row math then add
 Orders        = DISTINCTCOUNT(Sales[OrderID])        -- unique, not row count
 ```
@@ -285,8 +285,8 @@ The *same* measure returns a different number in each cell, because each cell is
 ## ⏳ TIME INTELLIGENCE
 ```DAX
 Sales YTD   = TOTALYTD([Total Sales], DimDate[Date])
-Sales LY    = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(DimDate[Date]))
-YoY Growth% = DIVIDE([Total Sales]-[Sales LY], [Sales LY])
+Sales PY    = CALCULATE([Total Sales], SAMEPERIODLASTYEAR(DimDate[Date]))
+YoY Growth% = DIVIDE([Total Sales]-[Sales PY], [Sales PY])
 Rolling 3M  = CALCULATE([Total Sales], DATESINPERIOD(DimDate[Date], MAX(DimDate[Date]), -3, MONTH))
 ```
 `SAMEPERIODLASTYEAR` shifts the date filter back exactly one year. Fiscal year: `TOTALYTD([m], DimDate[Date], "3/31")`. **Needs a marked, continuous date table** or it silently breaks.
@@ -422,7 +422,7 @@ If any step differs → investigate BEFORE publishing. Usual culprits: PQ droppe
 2 Power Query: load → inspect → clean → standardize → merge → append → validate → load
 3 Model: star → DimDate/Customer/Product/Region + FactSales/Returns/Target, mark date table
 4 DAX: Total Sales, Cost, Profit, Margin, Orders, Qty, AOV, Target, Variance, Achievement%,
-       Sales LY, YoY%, Sales YTD, Ranks
+       Sales PY, YoY%, Sales YTD, Ranks
 5 Pages: Executive · Sales · Profit · Customer · Product · Region · Detail · Admin/DQ
 6 Interactivity: slicers, drill-down, drillthrough, tooltip pages, bookmarks
 7 RLS: regional managers see own region; Exec sees all
